@@ -37,6 +37,14 @@ $googleUser = json_decode(
 );
 
 ?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>profile</title>
+</head>
+<body>
+
 
 <div class="box">
 
@@ -57,4 +65,8 @@ $googleUser = json_decode(
         <div>locale:<?php echo $googleUser->locale; ?></div>
     </div>
 </div>
+
+
+</body>
+</html>
 

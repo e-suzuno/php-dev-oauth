@@ -5,7 +5,6 @@
  */
 
 
-
 include_once __DIR__ . '/../vendor/autoload.php';
 
 $oauth_credentials = __DIR__ . '/../config/client_secret.json';
@@ -20,15 +19,20 @@ $scopes = [
 ];
 $client->addScope($scopes);
 
-
-$authUrl = $client->createAuthUrl();
-
-
 ?>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>認証</title>
+</head>
+<body>
+
 
 <div class="box">
-    <div class="request">
-        <a class='login' href='<?= $authUrl ?>'>Connect Me!</a>
-    </div>
+    <a class='login' href='<?php echo $client->createAuthUrl(); ?>'>Googleによるログイン</a>
 </div>
+
+</body>
+</html>
 
