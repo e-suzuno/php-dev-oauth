@@ -5,19 +5,21 @@
  */
 
 
+use App\OAuth\OAuthFactory;
+
 include_once __DIR__ . '/../vendor/autoload.php';
 
 $oauth_credentials = __DIR__ . '/../config/client_secret.json';
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . "/profile.php";
 
-$client = new Google\Client();
-$client->setAuthConfig($oauth_credentials);
-$client->setRedirectUri($redirect_uri);
-$scopes = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-];
-$client->addScope($scopes);
+
+
+$GoogleOAuth =(new OAuthFactory)->get("google");
+$GoogleOAuth->setAuthConfigFile($oauth_credentials);
+$GoogleOAuth->setRedirectUrl($redirect_uri);
+
+
+
 
 ?>
 <!DOCTYPE html>
@@ -30,7 +32,7 @@ $client->addScope($scopes);
 
 
 <div class="box">
-    <a class='login' href='<?php echo $client->createAuthUrl(); ?>'>Googleによるログイン</a>
+    <a class='login' href='<?php echo $GoogleOAuth->getAuthUrl(); ?>'>Googleによるログイン</a>
 </div>
 
 </body>

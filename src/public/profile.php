@@ -8,33 +8,29 @@
  */
 
 
+use App\OAuth\OAuthFactory;
+
 include_once __DIR__ . '/../vendor/autoload.php';
 
 
 $oauth_credentials = __DIR__ . '/../config/client_secret.json';
 $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . "/profile.php";
 
-$client = new Google\Client();
-$client->setAuthConfig($oauth_credentials);
-$client->setRedirectUri($redirect_uri);
-$scopes = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-];
-$client->addScope($scopes);
+
+$GoogleOAuth = (new OAuthFactory)->get("google");
+$GoogleOAuth->setAuthConfigFile($oauth_credentials);
+$GoogleOAuth->setRedirectUrl($redirect_uri);
 
 
 if (!isset($_GET['code'])) {
     echo "error";
     exit;
 }
+$GoogleOAuth->setAuthorizationCode($_GET['code']);
 
 
-$token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+$user = $GoogleOAuth->getUser();
 
-$googleUser = json_decode(
-    file_get_contents('https://www.googleapis.com/oauth2/v1/userinfo?' . 'access_token=' . $token['access_token'])
-);
 
 ?>
 <!DOCTYPE html>
@@ -47,22 +43,27 @@ $googleUser = json_decode(
 
 
 <div class="box">
+    <a href="index.php">top</a>
 
     <div class="profile">
 
         <div>
-            id:
-            <?php echo $googleUser->id; ?>
+            service_type:
+            <?php echo $user->service_type; ?>
         </div>
         <div>
-            picture:
-            <img src="<?php echo $googleUser->picture; ?>" alt="picture">
+            id:
+            <?php echo $user->id; ?>
         </div>
-        <div>email:<?php echo $googleUser->email; ?></div>
-        <div>name:<?php echo $googleUser->name; ?></div>
-        <div>given_name:<?php echo $googleUser->given_name; ?></div>
-        <div>family_name:<?php echo $googleUser->family_name; ?></div>
-        <div>locale:<?php echo $googleUser->locale; ?></div>
+        <div>
+            thumbnail:
+            <img src="<?php echo $user->thumbnail; ?>" alt="thumbnail">
+        </div>
+        <div>email:<?php echo $user->email; ?></div>
+        <div>name:<?php echo $user->name; ?></div>
+        <div>given_name:<?php echo $user->given_name; ?></div>
+        <div>family_name:<?php echo $user->family_name; ?></div>
+        <div>locale:<?php echo $user->locale; ?></div>
     </div>
 </div>
 
