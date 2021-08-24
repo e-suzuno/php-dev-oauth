@@ -1,0 +1,8 @@
+{
+    "name": "root/html",
+    "autoload": {
+    },
+    "require": {
+        "google/apiclient": "^2.10"
+    }
+}
