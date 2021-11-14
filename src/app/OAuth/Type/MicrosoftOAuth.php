@@ -123,7 +123,7 @@ class MicrosoftOAuth implements OAuthTypeInterface
         $graph = new Graph();
         $graph->setAccessToken($accessToken);
 
-        $user = $graph->createRequest('GET', '/me?$select=displayName,mail,mailboxSettings,userPrincipalName')
+        $user = $graph->createRequest('GET', '/me?$select=id,displayName,givenName,mail,userPrincipalName')
             ->setReturnType(MicrosoftUser::class)
             ->execute();
 
@@ -135,7 +135,7 @@ class MicrosoftOAuth implements OAuthTypeInterface
 
         return new OAuthEntity(
             $this->service_type,
-            $user->getId(),
+            $user->getId() ?? "",
             $user->getDisplayName(),
             $user->getMail() ?? $user->getUserPrincipalName() ?? "",
             $user->getGivenName(),
