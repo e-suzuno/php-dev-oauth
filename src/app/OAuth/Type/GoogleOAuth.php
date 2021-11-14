@@ -5,6 +5,7 @@ namespace App\OAuth\Type;
 
 use App\OAuth\Entities\OAuthEntity;
 use Google\Client;
+use Google\Exception;
 
 /**
  * Class GoogleOAuth
@@ -18,6 +19,7 @@ class GoogleOAuth implements OAuthTypeInterface
      */
     private string $service_type = "google";
 
+
     /**
      * @var string[]
      */
@@ -25,6 +27,7 @@ class GoogleOAuth implements OAuthTypeInterface
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/userinfo.profile",
     ];
+
 
     /**
      * @var Client
@@ -40,12 +43,20 @@ class GoogleOAuth implements OAuthTypeInterface
     /**
      * GoogleOAuth constructor.
      */
-    public function __construct()
+    public function __construct($config = [])
     {
         $this->client = $this->getClient();
         $this->client->addScope($this->scopes);
-    }
 
+        try {
+            $this->client->setAuthConfig($config);
+        } catch (Exception $e) {
+        }
+
+        $this->setRedirectUrl($config['redirect_uri']);
+
+
+    }
 
     /**
      * @return Client
@@ -55,14 +66,6 @@ class GoogleOAuth implements OAuthTypeInterface
         return new Client();
     }
 
-
-    /**
-     * @param string $filepath
-     */
-    public function setAuthConfigFile(string $filepath): void
-    {
-        $this->client->setAuthConfig($filepath);
-    }
 
     /**
      * @param string $url
@@ -88,12 +91,25 @@ class GoogleOAuth implements OAuthTypeInterface
      */
     public function setAuthorizationCode($code): void
     {
-        $this->token = $this->client->fetchAccessTokenWithAuthCode($code);
+        $token = $this->client->fetchAccessTokenWithAuthCode($code);
+        $this->setAccessToken($token);
     }
 
-    public function getAccessToken()
+
+    /**
+     * @param $token
+     */
+    public function setAccessToken($token): void
     {
-        return $this->token['access_token'];
+        $this->token = $token;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAccessToken(): mixed
+    {
+        return $this->token;
     }
 
     /**
@@ -101,11 +117,10 @@ class GoogleOAuth implements OAuthTypeInterface
      */
     public function getUser(): OAuthEntity
     {
-        $access_token = $this->getAccessToken();
+        $token = $this->getAccessToken();
         $googleUser = json_decode(
-            file_get_contents('https://www.googleapis.com/oauth2/v1/userinfo?' . 'access_token=' . $access_token)
+            file_get_contents('https://www.googleapis.com/oauth2/v1/userinfo?' . 'access_token=' . $token['access_token'])
         );
-
 
         return new OAuthEntity(
             $this->service_type,

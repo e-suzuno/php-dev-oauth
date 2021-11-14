@@ -12,14 +12,6 @@ use App\OAuth\Entities\OAuthEntity;
 interface OAuthTypeInterface
 {
 
-
-    /**
-     * 設定ファイルのパスを指定する。
-     *
-     * @param string $filepath
-     */
-    public function setAuthConfigFile(string $filepath): void;
-
     /**
      * リダイレクト先のURLを設定する。
      *
@@ -40,6 +32,19 @@ interface OAuthTypeInterface
      * @param $code
      */
     public function setAuthorizationCode($code): void;
+
+
+    /**
+     * アクセストークンのセット
+     */
+    public function setAccessToken($token): void;
+
+
+    /**
+     * アクセストークンの取得
+     */
+    public function getAccessToken(): mixed;
+
 
 
     /**

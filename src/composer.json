@@ -3,10 +3,16 @@
   "autoload": {
     "psr-4": {
       "App\\": "app/"
-    }
+    },
+    "files": [
+      "app/helper.php"
+    ]
   },
   "require": {
     "google/apiclient": "^2.10",
-    "ext-json": "*"
+    "league/oauth2-client": "^2.6",
+    "microsoft/microsoft-graph": "^1.44.0",
+    "ext-json": "*",
+    "vlucas/phpdotenv": "^5.4"
   }
 }

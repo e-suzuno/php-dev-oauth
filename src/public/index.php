@@ -5,20 +5,17 @@
  */
 
 
+include_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . '/../');
+$dotenv->load();
+session_start();
+oauth_session_reset();
+
+
 use App\OAuth\OAuthFactory;
 
-include_once __DIR__ . '/../vendor/autoload.php';
-
-$oauth_credentials = __DIR__ . '/../config/client_secret.json';
-$redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . "/profile.php";
-
-
-
-$GoogleOAuth =(new OAuthFactory)->get("google");
-$GoogleOAuth->setAuthConfigFile($oauth_credentials);
-$GoogleOAuth->setRedirectUrl($redirect_uri);
-
-
+$GoogleOAuth = (new OAuthFactory)->get("google", config("oauth.google"));
+$MicrosoftOAuth = (new OAuthFactory)->get("microsoft", config("oauth.microsoft"));
 
 
 ?>
@@ -32,8 +29,18 @@ $GoogleOAuth->setRedirectUrl($redirect_uri);
 
 
 <div class="box">
-    <a class='login' href='<?php echo $GoogleOAuth->getAuthUrl(); ?>'>Googleによるログイン</a>
+
+    <ul>
+        <li>
+
+            <a class='login' href='<?php echo $GoogleOAuth->getAuthUrl(); ?>'>Googleによるログイン</a>
+        </li>
+        <li>
+            <a class='login' href='<?php echo $MicrosoftOAuth->getAuthUrl(); ?>'>Microsoftによるログイン</a>
+        </li>
+    </ul>
 </div>
+
 
 </body>
 </html>
